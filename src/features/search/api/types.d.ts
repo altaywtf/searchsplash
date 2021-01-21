@@ -32,6 +32,8 @@ export type SearchResultItem = {
   blur_hash: string;
   likes: number;
   description: string;
+  width: number;
+  height: number;
   user: {
     id: string;
     username: string;

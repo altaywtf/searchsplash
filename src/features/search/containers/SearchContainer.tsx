@@ -2,6 +2,11 @@ import React, { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { AppState } from "../../../core/store";
 import { searchPhotos, paginateResults } from "../store/actions";
+import { Flex, Box, Button } from "rebass";
+import { Label, Input } from "@rebass/forms";
+import { Photo } from "../components/Photo";
+
+const CONTAINER_WIDTH = 640;
 
 export const SearchContainer: React.FC = () => {
   const dispatch = useDispatch();
@@ -11,7 +16,14 @@ export const SearchContainer: React.FC = () => {
   );
 
   const handleSearch = useCallback(
-    (keyword: string) => dispatch(searchPhotos({ query: keyword })),
+    (e: React.SyntheticEvent) => {
+      e.preventDefault();
+      const target = e.target as typeof e.target & {
+        keyword: { value: string };
+      };
+
+      dispatch(searchPhotos({ query: target.keyword.value }));
+    },
     [dispatch]
   );
 
@@ -37,9 +49,9 @@ export const SearchContainer: React.FC = () => {
 
       case "idle":
         return (
-          <button onClick={() => handlePaginate(state.pagination.page + 1)}>
-            load more
-          </button>
+          <Button variant="secondary" onClick={() => handlePaginate(state.pagination.page + 1)}>
+            Load More
+          </Button>
         );
     }
   }, [state, handlePaginate]);
@@ -57,14 +69,15 @@ export const SearchContainer: React.FC = () => {
 
       case "success":
         return (
-          <div>
-            <div>
-              {state.data.map((photo) => (
-                <div key={photo.id}>{photo.blur_hash}</div>
-              ))}
-            </div>
-            <div>{renderPagination()}</div>
-          </div>
+          <Box marginY={4}>
+            {state.data.map((photo) => (
+              <Box key={photo.id} marginBottom={4}>
+                <Photo width={CONTAINER_WIDTH} data={photo} />
+              </Box>
+            ))}
+
+            <>{renderPagination()}</>
+          </Box>
         );
 
       case "failure":
@@ -73,21 +86,37 @@ export const SearchContainer: React.FC = () => {
   }, [state, renderPagination]);
 
   return (
-    <div>
-      <form
-        onSubmit={(e: React.SyntheticEvent) => {
-          e.preventDefault();
-          const target = e.target as typeof e.target & {
-            keyword: { value: string };
-          };
-          handleSearch(target.keyword.value);
-        }}
-      >
-        <input name="keyword" placeholder="type a keyword" />
-        <button type="submit">Search</button>
+    <Box width={CONTAINER_WIDTH} my={4} mx="auto">
+      <form onSubmit={handleSearch}>
+        <Flex alignItems="flex-end" justifyContent="space-between">
+          <Box flex={1}>
+            <Label htmlFor="keyword">Keyword</Label>
+
+            <Input
+              id="keyword"
+              name="keyword"
+              placeholder="Type a keyword: Berlin"
+            />
+          </Box>
+
+          <Box mx={1} />
+
+          <Box>
+            <Button
+              variant="primary"
+              mr={2}
+              type="submit"
+              disabled={state.status === "loading"}
+            >
+              Search
+            </Button>
+          </Box>
+        </Flex>
       </form>
 
-      {renderResults()}
-    </div>
+      <Box my={2} />
+
+      <Box style={{ textAlign: "center" }}>{renderResults()}</Box>
+    </Box>
   );
 };

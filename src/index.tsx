@@ -1,6 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+// @ts-ignore
+import { ThemeProvider } from 'theme-ui'
+// @ts-ignore
+import theme from '@rebass/preset'
 import { store } from './core/store';
 import { SearchContainer } from './features/search/containers/SearchContainer';
 import * as serviceWorker from './serviceWorker';
@@ -8,7 +12,9 @@ import * as serviceWorker from './serviceWorker';
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <SearchContainer />
+      <ThemeProvider theme={theme}>
+        <SearchContainer />
+      </ThemeProvider>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')
