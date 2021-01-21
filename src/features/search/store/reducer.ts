@@ -1,5 +1,5 @@
 import type { SearchParams, SearchResponse } from "../api/types";
-import type { SearchAction } from "./actions";
+import type { AppAction } from "../../../core/store";
 
 type PaginationState = (
   | { status: "idle" }
@@ -12,7 +12,7 @@ type PaginationState = (
   totalItems: number;
 };
 
-type SearchState =
+export type SearchState =
   | { status: "idle" }
   | { status: "loading"; params: SearchParams }
   | { status: "empty"; params: SearchParams }
@@ -26,7 +26,7 @@ type SearchState =
 
 export const searchReducer = (
   state: SearchState = { status: "idle" },
-  action: SearchAction
+  action: AppAction
 ): SearchState => {
   switch (action.type) {
     case "SEARCH_PHOTOS_REQUEST":
@@ -46,7 +46,7 @@ export const searchReducer = (
         status: "success",
         data: action.payload.results,
         pagination: {
-          status: action.payload.total_pages === 1 ? "idle" : "ended",
+          status: action.payload.total_pages === 1 ? "ended" : "idle",
           page: 1,
           totalPages: action.payload.total_pages,
           totalItems: action.payload.total,

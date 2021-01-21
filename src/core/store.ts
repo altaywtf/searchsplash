@@ -1,16 +1,19 @@
-import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
-import { searchReducer } from "../features/search/store/reducer";
+import { configureStore, ThunkAction } from "@reduxjs/toolkit";
+import type { SearchAction } from "../features/search/store/actions";
+import { searchReducer, SearchState } from "../features/search/store/reducer";
 
-export const store = configureStore({
+export type AppState = { search: SearchState };
+export type AppAction = SearchAction;
+
+export const store = configureStore<AppState, AppAction>({
   reducer: {
-    search: searchReducer as any,
+    search: searchReducer,
   },
 });
 
-export type RootState = ReturnType<typeof store.getState>;
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,
-  RootState,
+  AppState,
   unknown,
-  Action<string>
+  AppAction
 >;
