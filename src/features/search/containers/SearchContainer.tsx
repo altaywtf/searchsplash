@@ -2,8 +2,7 @@ import React, { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { AppState } from "../../../core/store";
 import { searchPhotos, paginateResults } from "../store/actions";
-import { Flex, Box, Button } from "rebass";
-import { Label, Input } from "@rebass/forms";
+import { Flex, Box, Button, Heading, Input } from "theme-ui";
 import { Photo } from "../components/Photo";
 
 const CONTAINER_WIDTH = 640;
@@ -39,13 +38,13 @@ export const SearchContainer: React.FC = () => {
 
     switch (state.pagination.status) {
       case "loading":
-        return "loading more...";
+        return "Loading more...";
 
       case "ended":
         return null;
 
       case "error":
-        return "failed to load more";
+        return `Failed to load more: ${state.pagination.error.message}`;
 
       case "idle":
         return (
@@ -62,10 +61,10 @@ export const SearchContainer: React.FC = () => {
         return null;
 
       case "loading":
-        return "loading";
+        return "Loading";
 
       case "empty":
-        return "no result";
+        return "No result";
 
       case "success":
         return (
@@ -81,21 +80,24 @@ export const SearchContainer: React.FC = () => {
         );
 
       case "failure":
-        return "whooooops an error occurred";
+        return `Whooooops an error occurred: ${state.error.message}`;
     }
   }, [state, renderPagination]);
 
   return (
-    <Box width={CONTAINER_WIDTH} my={4} mx="auto">
-      <form onSubmit={handleSearch}>
-        <Flex alignItems="flex-end" justifyContent="space-between">
-          <Box flex={1}>
-            <Label htmlFor="keyword">Keyword</Label>
+    <Box my={4} mx="auto" sx={{ width: CONTAINER_WIDTH }}>
+      <Heading my={4}>
+        📸 SearchSplash
+      </Heading>
 
+      <form onSubmit={handleSearch}>
+        <Flex>
+          <Box sx={{ flex: '1 1 auto' }}>
             <Input
               id="keyword"
               name="keyword"
-              placeholder="Type a keyword: Berlin"
+              placeholder="Search free-high resolution photos"
+              autoFocus
             />
           </Box>
 
